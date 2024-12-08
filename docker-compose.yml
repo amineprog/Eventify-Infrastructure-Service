@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  nats:
+    image: nats:latest
+    ports:
+      - "4222:4222"
+      - "8222:8222"
+  api-gateway:
+    image: public.ecr.aws/h7r7v5j6/eventify/api-gateway:latest
+    container_name: api-gateway
+    ports:
+      - "3000:3000"
+    environment:
+      - PORT=3000
+      - NATS_URL=nats://nats:4222      
+    depends_on:
+      - nats
+  user-service:
+    image: public.ecr.aws/h7r7v5j6/eventify/user-service:latest
+    container_name: user-service
+    ports:
+      - "3001:3001"
+    environment:
+      - PORT=3001
+      - NATS_URL=nats://nats:4222
+      - MONGO_URI=mongodb://user-mongo:27017/users
+    depends_on:
+      - nats
+      - user-mongo
+  user-mongo:
+    image: mongo:latest
+    container_name: user-mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - user-data:/data/db
+
+volumes:
+  user-data:
