@@ -9,6 +9,7 @@ services:
   api-gateway:
     image: public.ecr.aws/h7r7v5j6/eventify/api-gateway:latest
     container_name: api-gateway
+    command: node dist/main
     ports:
       - "3000:3000"
     environment:
@@ -19,6 +20,7 @@ services:
   user-service:
     image: public.ecr.aws/h7r7v5j6/eventify/user-service:latest
     container_name: user-service
+    command: node dist/main
     ports:
       - "3001:3001"
     environment:
